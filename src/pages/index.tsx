@@ -1,13 +1,15 @@
-import React, { useEffect, useReducer } from "react"
+import React, { useContext, useEffect, useReducer } from "react"
 import { Link } from "gatsby"
 
-import Layout from "../components/layout"
+import Layout, { Context } from "../components/layout"
 import Image from "../components/image"
 import SEO from "../components/seo"
 
 export default IndexPage
 function IndexPage() {
   const [list, setList] = useReducer((state, newVal) => newVal, [])
+  console.warn( useContext(Context) )
+
   async function init(){
     if ( new Date().getTime() < list?.timeout ?? 0 ) { return }
     try {

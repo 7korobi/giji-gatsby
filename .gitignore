@@ -4,6 +4,7 @@ config/live.yml
 config/service_account.yml
 /public
 src/public/images/portrate
+static/images/portrate
 
 # Logs
 logs
