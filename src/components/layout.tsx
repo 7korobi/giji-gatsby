@@ -2,10 +2,20 @@ import React, { createContext, useContext, useState, useEffect } from "react"
 import { Helmet } from "react-helmet"
 import { Link } from "gatsby"
 
+import FB from "firebase/app"
+import "firebase/auth"
+import "firebase/firestore"
+import "firebase/functions"
+import "firebase/messaging"
+
 import { localStore, sessionStore, useStore } from "./storage"
 
-import { url } from "../config/live.yml"
+import live from "../config/live.yml"
 import folder from "../yaml/sow_folder.yml"
+
+if (typeof window !== "undefined" && window !== null) {
+  FB.initializeApp( live.firebase )
+}
 
 localStore({
   bg: 'BG',
@@ -141,7 +151,7 @@ function Layout({ children }) {
       <div className="page-active-bg">
         <Header {...{ bg, font, theme }}/>
         <div id="welcome" style={{
-          backgroundImage: `url(${url.assets}/images/bg/fhd-giji.png)`,
+          backgroundImage: `url(${live.url.assets}/images/bg/fhd-giji.png)`,
           backgroundPosition: `left 50% top ${-top / 3}px`,
         }}>
           <div className="form" id="export">
