@@ -8,7 +8,6 @@ import SEO from "../components/seo"
 export default IndexPage
 function IndexPage() {
   const [list, setList] = useReducer((state, newVal) => newVal, [])
-  console.warn( useContext(Context) )
 
   async function init(){
     if ( new Date().getTime() < list?.timeout ?? 0 ) { return }
@@ -29,7 +28,6 @@ function IndexPage() {
   })
 
   return (<Layout>
-    <SEO title="Home" />
     <h1>Hi people</h1>
     <p>Welcome to your new Gatsby site.</p>
     <p>Now go build something great.</p>

@@ -2,17 +2,20 @@ import React, { createContext, useContext, useState, useEffect } from "react"
 import { Helmet } from "react-helmet"
 import { Link } from "gatsby"
 
-import { url } from "../config/live.yml"
-import folder from "../yaml/Sow_folder.yml"
+import { localStore, sessionStore, useStore } from "./storage"
 
-const cookie = {
+import { url } from "../config/live.yml"
+import folder from "../yaml/sow_folder.yml"
+
+localStore({
   bg: 'BG',
   font: 'novel',
   theme: 'cinema',
-}
-export const Context = createContext(cookie)
-export default Layout
+  shows: [],
+  options: [],
+})
 
+export default Layout
 
 function Btn({ state, as, children }) {
   const mode = state[0] === as ? "active" : ""
@@ -56,7 +59,7 @@ function CReport({ id, anker, to, head, label, deco, handle, write_at, children 
   return (
     <div className="report" key={id}>
       <div className={`chat ${handle}`} id={id}>
-        <ChatName to={to} head={head} label={label} />
+        <ChatName {...{ to, head, label }}/>
         <div className={`text ${deco}`}>
           {children}
         </div>
@@ -96,8 +99,7 @@ function Sow({ folder_id }) {
   }
 }
 
-function Header() {
-  const { bg, font, theme } = useContext(Context)
+function Header({ bg, font, theme }) {
   let log = ""
   switch (theme) {
     case "snow":
@@ -126,19 +128,18 @@ function Header() {
 
 function Layout({ children }) {
   const [mode, setMode] = useState("finish")
+  const useBg = useStore("bg")
+  const useFont = useStore("font")
+  const useTheme = useStore("theme")
 
-  const [cookie_value, setCookie] = useState(cookie)
-  const { bg, font, theme } = cookie_value
-  const setBg = (bg) => setCookie({ bg, font, theme })
-  const setFont = (font) => setCookie({ bg, font, theme })
-  const setTheme = (theme) => setCookie({ bg, font, theme })
-
+  const [bg] = useBg
+  const [font] = useFont
+  const [theme] = useTheme
   const top = 10
 
   return (
-    <Context.Provider value={cookie_value}>
-      <Header />
       <div className="page-active-bg">
+        <Header {...{ bg, font, theme }}/>
         <div id="welcome" style={{
           backgroundImage: `url(${url.assets}/images/bg/fhd-giji.png)`,
           backgroundPosition: `left 50% top ${-top / 3}px`,
@@ -180,28 +181,28 @@ function Layout({ children }) {
           </h1>
           <div className="btns form">
             <span>
-              <Btn state={[bg, setBg]} as="BG">１</Btn>
-              <Btn state={[bg, setBg]} as="BG75">¾</Btn>
-              <Btn state={[bg, setBg]} as="BG50">½</Btn>
+              <Btn state={useBg} as="BG">１</Btn>
+              <Btn state={useBg} as="BG75">¾</Btn>
+              <Btn state={useBg} as="BG50">½</Btn>
             </span>
             <span>
-              <Btn state={[font, setFont]} as="large">大判</Btn>
-              <Btn state={[font, setFont]} as="novel">明朝</Btn>
-              <Btn state={[font, setFont]} as="press">新聞</Btn>
+              <Btn state={useFont} as="large">大判</Btn>
+              <Btn state={useFont} as="novel">明朝</Btn>
+              <Btn state={useFont} as="press">新聞</Btn>
             </span>
             <span>
-              <Btn state={[font, setFont]} as="goth-L">L</Btn>
-              <Btn state={[font, setFont]} as="goth-M">M</Btn>
-              <Btn state={[font, setFont]} as="goth-S">S</Btn>
+              <Btn state={useFont} as="goth-L">L</Btn>
+              <Btn state={useFont} as="goth-M">M</Btn>
+              <Btn state={useFont} as="goth-S">S</Btn>
             </span>
             <span>
-              <Btn state={[theme, setTheme]} as="cinema">煉瓦</Btn>
-              <Btn state={[theme, setTheme]} as="pop">   噴出</Btn>
-              <Btn state={[theme, setTheme]} as="snow">  雪景</Btn>
-              <Btn state={[theme, setTheme]} as="star">  蒼穹</Btn>
-              <Btn state={[theme, setTheme]} as="night"> 闇夜</Btn>
-              <Btn state={[theme, setTheme]} as="moon">  月夜</Btn>
-              <Btn state={[theme, setTheme]} as="wa">   和の国</Btn>
+              <Btn state={useTheme} as="cinema">煉瓦</Btn>
+              <Btn state={useTheme} as="pop">   噴出</Btn>
+              <Btn state={useTheme} as="snow">  雪景</Btn>
+              <Btn state={useTheme} as="star">  蒼穹</Btn>
+              <Btn state={useTheme} as="night"> 闇夜</Btn>
+              <Btn state={useTheme} as="moon">  月夜</Btn>
+              <Btn state={useTheme} as="wa">   和の国</Btn>
             </span>
           </div>
 
@@ -228,19 +229,19 @@ function Layout({ children }) {
                   </div>
                 </div>
                 <div className="icons form">
-                  <slot name="toasts"></slot>
+                  <p name="toasts"></p>
                 </div>
               </div>
             </div>
             <div className="sideframe">
               <div className="inframe">
                 <div className="icons form">
-                  <slot name="icons"></slot>
+                  <p name="icons"></p>
                 </div>
               </div>
             </div>
             <div className="summaryframe options" name="list" tag="div" key="summary">
-              <slot name="summary"></slot>
+              <p name="summary"></p>
             </div>
             <div className="center-left"></div>
             <div className="center-right"></div>
@@ -277,10 +278,9 @@ function Layout({ children }) {
                 </CReport>
               </div>
             </div>
-            <slot name="popup"></slot>
+            <p name="popup"></p>
           </div>
         </div>
       </div>
-    </Context.Provider>
   )
 }
