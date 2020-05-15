@@ -1,6 +1,7 @@
-import React, { createContext, useContext, useState, useEffect } from "react"
+import React, { createContext, useContext, useState, useEffect, ReactNode } from "react"
 import { Helmet } from "react-helmet"
 import { Link } from "gatsby"
+import { replaceState, localStore, useStore, Bits } from "react-petit-hooks/lib/storage"
 
 import FB from "firebase/app"
 import "firebase/auth"
@@ -8,7 +9,7 @@ import "firebase/firestore"
 import "firebase/functions"
 import "firebase/messaging"
 
-import { localStore, sessionStore, useStore } from "./storage"
+import { CReport } from "./chat"
 
 import live from "../config/live.yml"
 import folder from "../yaml/sow_folder.yml"
@@ -17,67 +18,43 @@ if (typeof window !== "undefined" && window !== null) {
   FB.initializeApp( live.firebase )
 }
 
+type IBits<T extends string> = {[P in T]: boolean }
+
+const ShowLabels = ['pin','toc','potof','current','search','magnify','side','link','mention'] as const
+const OptionLabels = ['impose','swipe_page','is_used'] as const
+type IShowLabels = typeof ShowLabels[number]
+type IOptionLabels = typeof OptionLabels[number]
+const ShowBits = Bits.assign<IShowLabels>(ShowLabels)
+const OptionBits = Bits.assign<IOptionLabels>(OptionLabels)
+
+type IBgLabels = 'BG' | 'BG75' | 'BG50'
+type IFontLabels = 'novel' | 'large' | 'press' | 'goth-L' | 'goth-M' | 'goth-S'
+type IThemeLabels = 'cinema' | 'pop' | 'snow' | 'star' | 'night' | 'moon' | 'wa'
+type IlocalStore = {
+  bg: IBgLabels
+  font: IFontLabels
+  theme: IThemeLabels
+  shows: typeof ShowBits
+  options: typeof OptionBits
+}
+
 localStore({
   bg: 'BG',
   font: 'novel',
   theme: 'cinema',
-  shows: [],
-  options: [],
+  welcome: 'finish',
+  show: ShowBits.by([]),
+  option: OptionBits.by([]),
 })
 
 export default Layout
 
-function Btn({ state, as, children }) {
+function Btn<T>({ state, as, children }: { state: [T, (val: T)=> void ], as: T, children: ReactNode }) { 
   const mode = state[0] === as ? "active" : ""
   return (
     <a className={`btn ${mode}`} onClick={() => state[1](as)} >
       {children}
     </a>
-  )
-}
-
-function ChatName({ to, head, label }) {
-  if (!head) {
-    return <></>
-  }
-
-  if (to) {
-    return (
-      <>
-        <div className="name center">
-          <span className="pull-right">{{ to }}</span>
-          ▷
-          <span className="pull-left">{{ head }}</span>
-        </div>
-        <hr />
-      </>
-    )
-
-  } else {
-    return (
-      <>
-        <div className="name">
-          <sup className="pull-right" v-if="label">{{ label }}</sup>
-          {{ head }}
-        </div>
-      </>
-    )
-  }
-}
-
-function CReport({ id, anker, to, head, label, deco, handle, write_at, children }) {
-  return (
-    <div className="report" key={id}>
-      <div className={`chat ${handle}`} id={id}>
-        <ChatName {...{ to, head, label }}/>
-        <div className={`text ${deco}`}>
-          {children}
-        </div>
-        <div className="date">
-          <a className={`Btn active`}>{anker}</a>
-        </div>
-      </div>
-    </div>
   )
 }
 
@@ -137,10 +114,14 @@ function Header({ bg, font, theme }) {
 }
 
 function Layout({ children }) {
-  const [mode, setMode] = useState("finish")
-  const useBg = useStore("bg")
-  const useFont = useStore("font")
-  const useTheme = useStore("theme")
+  const useWelcome = useStore("welcome")
+  const useBg = useStore<IBgLabels>("bg")
+  const useFont = useStore<IFontLabels>("font")
+  const useTheme = useStore<IThemeLabels>("theme")
+  const [show_bits] = useStore<number>("show.bits")
+  const usePin = useStore<boolean>("show.pin")
+  const useMention = useStore<Boolean>("show.mention")
+  console.warn('show.bits', show_bits)
 
   const [bg] = useBg
   const [font] = useFont
@@ -181,8 +162,8 @@ function Layout({ children }) {
               <Sow folder_id="CIEL"></Sow>
             </div>
             <div className="welcome-btns col4">
-              <Btn state={[mode, setMode]} as="finish"> 終了した村</Btn>
-              <Btn state={[mode, setMode]} as="progress">進行中の村</Btn>
+              <Btn state={useWelcome} as="finish"> 終了した村</Btn>
+              <Btn state={useWelcome} as="progress">進行中の村</Btn>
             </div>
             <div className="welcome-btns col4 shoe"><a href="https://giji.f5.si/">総合トップ</a></div>
           </div>
@@ -213,6 +194,16 @@ function Layout({ children }) {
               <Btn state={useTheme} as="night"> 闇夜</Btn>
               <Btn state={useTheme} as="moon">  月夜</Btn>
               <Btn state={useTheme} as="wa">   和の国</Btn>
+            </span>
+            <span>
+              <Btn state={usePin} as={false}>0</Btn>
+              show.pin
+              <Btn state={usePin} as={true}>1</Btn>
+            </span>
+            <span>
+              <Btn state={useMention} as={false}>0</Btn>
+              show.mention
+              <Btn state={useMention} as={true}>1</Btn>
             </span>
           </div>
 
