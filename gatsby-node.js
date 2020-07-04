@@ -6,7 +6,7 @@
 
 // You can delete this file if you're not using it
 
-exports.onCreateWebpackConfig = ({ actions, loaders, getConfig }) => {
+exports.onCreateWebpackConfig = ({ stage, rules, loaders, plugins, actions, getConfig }) => {
   const config = getConfig()
   config.module.rules.forEach((rule) => {
     const { test, use } = rule
@@ -17,6 +17,25 @@ exports.onCreateWebpackConfig = ({ actions, loaders, getConfig }) => {
       }
     }
   })
+
+  console.log(stage, JSON.stringify(config))
   // This will completely replace the webpack config with the modified object.
   actions.replaceWebpackConfig(config)
+
+  if (stage === 'build-html') {
+    actions.setWebpackConfig({
+      // Don't bundle modules that reference browser globals such as `window` and `IDBIndex` during SSR.
+      // See: https://github.com/gatsbyjs/gatsby/issues/17725
+      externals: config.externals.concat(function(_context, request, callback) {
+        // Exclude bundling firebase* and react-firebase*
+        // These are instead required at runtime.
+        if (/^@?(react-)?firebase(.*)/.test(request)) {
+          console.log('Excluding bundling of: ' + request);
+          return callback(null, 'umd ' + request);
+        }
+        callback();
+      }),
+    });
+  }
 }
+

@@ -14,7 +14,7 @@ import { CReport } from "./chat"
 import live from "../config/live.yml"
 import folder from "../yaml/sow_folder.yml"
 
-if (typeof window !== "undefined" && window !== null) {
+if (typeof window !== 'undefined') {
   FB.initializeApp( live.firebase )
 }
 
