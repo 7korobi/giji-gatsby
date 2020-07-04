@@ -6,6 +6,9 @@ config/service_account.yml
 src/public/images/portrate
 static/images/portrate
 
+functions/index.js
+functions/index.js.map
+
 # Logs
 logs
 *.log
