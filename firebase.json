@@ -4,20 +4,14 @@
     "indexes": "firestore.indexes.json"
   },
   "functions": {
-    "predeploy": [
-      "run-s copy:func"
-    ],
+    "predeploy": ["run-s copy:func"],
     "source": "functions"
   },
   "hosting": {
     "public": "dist",
     "cleanUrls": true,
     "trailingSlash": false,
-    "ignore": [
-      "firebase.json",
-      "**/.*",
-      "**/node_modules/**"
-    ]
+    "ignore": ["firebase.json", "**/.*", "**/node_modules/**"]
   },
   "storage": {
     "rules": "storage.rules"

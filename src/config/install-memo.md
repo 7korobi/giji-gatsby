@@ -1,5 +1,5 @@
-
 # root setup.
+
 ```
 sudo su
 useradd 7korobi

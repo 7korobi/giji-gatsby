@@ -3,7 +3,7 @@ import * as admin from 'firebase-admin'
 import format from 'date-fns/format'
 import locale from "date-fns/locale/ja"
 
-import { to_msec, to_tempo } from "vue-petit-store"
+import { to_msec, to_tempo } from "fancy-date"
 
 function tempo(doc) {
   if (! doc?.tempo[0] ) { return null }
