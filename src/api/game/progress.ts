@@ -30,47 +30,46 @@ function checkGM() {
     cursed: 0,
     feared: 0,
     droop: 0,
-    live: 0
-  };
+    live: 0,
+  }
 
-
-  ({
+  ;({
     map_reduce(o) {
-      c[o.potof.live.role_id] += 1;
+      c[o.potof.live.role_id] += 1
       switch (o.potof.live.role_id) {
-        case 'victim':
+        case "victim":
           switch (o.role.win) {
-            case 'DISH':
-              c[o.role.win] += 1;
-              return c.DISH += 1;
+            case "DISH":
+              c[o.role.win] += 1
+              return (c.DISH += 1)
           }
-          break;
-        case 'live':
+          break
+        case "live":
           switch (o.role.win) {
-            case 'HUMAN':
-              c.HUMAN += 1;
-              if (o.role_id === 'villager') {
-                return c.VILLAGER += 1;
+            case "HUMAN":
+              c.HUMAN += 1
+              if (o.role_id === "villager") {
+                return (c.VILLAGER += 1)
               }
-              break;
-            case 'PIXI':
-              return c.PIXI += 1;
-            case 'WOLF':
-              return c.WOLF += 1;
-            case 'LONEWOLF':
-              c.LONEWOLF += 1;
-              return c.WOLF += 1;
+              break
+            case "PIXI":
+              return (c.PIXI += 1)
+            case "WOLF":
+              return (c.WOLF += 1)
+            case "LONEWOLF":
+              c.LONEWOLF += 1
+              return (c.WOLF += 1)
             default:
-              c.HUMAN += 1;
-              c.OTHER += 1;
-              if (o.role.win === 'GURU') {
-                return c.SHEEP += 1;
+              c.HUMAN += 1
+              c.OTHER += 1
+              if (o.role.win === "GURU") {
+                return (c.SHEEP += 1)
               }
           }
-          break;
+          break
       }
-    }
-  });
+    },
+  })
   // if ( $plsingle->isEnableState('MASKSTATE_ZOMBIE') ) {
   // c.ZOMBIE += 1
   // if ($plsingle->{'sheep'} eq 'pixi'){
@@ -88,137 +87,144 @@ function checkGM() {
   //   $hates++;
   // }
 
-  let winner =
-    (() => {
-      switch (false) {
-        case c.live !== 0:
-          return 'NONE';
-        case c.live !== c.LOVE:
-          return 'LOVE';
-        case c.live !== c.SHEEP:
-          return 'GURU';
-        case 0 !== c.WOLF:
-          return 'HUMAN';
-        case !TABULA || !(c.HUMAN <= c.WOLF):
-          return 'WOLF';
-        case !MISTERY || (0 !== c.VILLAGER):
-          return 'WOLF';
-        default:
-          return null;
-      }
-    })();
-  if ((winner === 'WOLF') && (c.WOLF === c.LONEWOLF)) {
-    winner = 'LONEWOLF';
+  let winner = (() => {
+    switch (false) {
+      case c.live !== 0:
+        return "NONE"
+      case c.live !== c.LOVE:
+        return "LOVE"
+      case c.live !== c.SHEEP:
+        return "GURU"
+      case 0 !== c.WOLF:
+        return "HUMAN"
+      case !TABULA || !(c.HUMAN <= c.WOLF):
+        return "WOLF"
+      case !MISTERY || 0 !== c.VILLAGER:
+        return "WOLF"
+      default:
+        return null
+    }
+  })()
+  if (winner === "WOLF" && c.WOLF === c.LONEWOLF) {
+    winner = "LONEWOLF"
   }
 
   if (winner) {
     switch (false) {
       case !(c.LOVE > 0):
-        return 'LOVE';
+        return "LOVE"
       case c.BOND !== c.HATE || c.HATE !== 1:
-        return 'HATER';
+        return "HATER"
       case !(c.PIXI > 0):
         switch (winner) {
-          case 'HUMAN':
-            msg_pixi_human;
-            break;
-          case 'WOLF':
-            msg_pixi_wolf;
-            break;
-          case 'LONEWOLF':
-            msg_pixi_lonewolf;
-            break;
+          case "HUMAN":
+            msg_pixi_human
+            break
+          case "WOLF":
+            msg_pixi_wolf
+            break
+          case "LONEWOLF":
+            msg_pixi_lonewolf
+            break
         }
-        return 'PIXI';
+        return "PIXI"
       default:
-        return winner;
+        return winner
     }
   }
-};
+}
 
-
-export function deployment() { };
+export function deployment() {}
 
 export function startGM() {
-  deployment();
+  deployment()
   return (() => {
-    const result = [];
+    const result = []
     for (let idx = 0; idx < Query.stats.shuffle.list.length; idx++) {
-      const o = Query.stats.shuffle.list[idx];
+      const o = Query.stats.shuffle.list[idx]
       switch (o.able_id) {
         case setfriends:
-          result.push(ToDo);
-          break;
-        case 'rob':
-          result.push(history(discards.join("、")));
-          break;
-        case 'stigma':
-          result.push(o.label = `${codes[idx]}の${o.role.label}`);
-          break;
+          result.push(ToDo)
+          break
+        case "rob":
+          result.push(history(discards.join("、")))
+          break
+        case "stigma":
+          result.push((o.label = `${codes[idx]}の${o.role.label}`))
+          break
         default:
-          result.push(undefined);
+          result.push(undefined)
       }
     }
-    return result;
-  })();
-};
+    return result
+  })()
+}
 
-export function deployGM() { };
+export function deployGM() {}
 
-export function executionGM() { };
+export function executionGM() {}
 
 export function updateGM() {
-  let o;
-  deployment();
+  let o
+  deployment()
 
   // 突然死処理
-  const suddendeath = Query.potofs.where(o => (o.live.role_id === 'live') && (o.stats.SSAY.count === 0));
+  const suddendeath = Query.potofs.where(
+    (o) => o.live.role_id === "live" && o.stats.SSAY.count === 0
+  )
   for (o of Array.from(suddendeath.list)) {
-    now_dead('suddendead');
+    now_dead("suddendead")
   }
 
   // 能力を使う人のための処理
   const to = {
-    cast: Query.potofs.where(o => o.live.role.group !== 'mob'),
-    live: Query.potofs.where(o => o.live.role_id === 'live'),
-    dead: Query.potofs.where(o => (o.live.role_id !== 'live') && (o.live.role.group === 'LIVE')),
-    gm_live: Query.potofs.where(o => (o.live.role_id === 'live') || (o.live.role.group === 'MOB')),
-    gm_dead: Query.potofs.where(o => o.live.role_id !== 'live')
-  };
+    cast: Query.potofs.where((o) => o.live.role.group !== "mob"),
+    live: Query.potofs.where((o) => o.live.role_id === "live"),
+    dead: Query.potofs.where(
+      (o) => o.live.role_id !== "live" && o.live.role.group === "LIVE"
+    ),
+    gm_live: Query.potofs.where(
+      (o) => o.live.role_id === "live" || o.live.role.group === "MOB"
+    ),
+    gm_dead: Query.potofs.where((o) => o.live.role_id !== "live"),
+  }
 
-  const query = Query.stats.where(o => o.can(turn) && !o.potof_id);
+  const query = Query.stats.where((o) => o.can(turn) && !o.potof_id)
   for (o of Array.from(query)) {
-    const potof = _.sample(to[o.able.for].list);
-    o.potof_id = potof.id;
+    const potof = _.sample(to[o.able.for].list)
+    o.potof_id = potof.id
   }
 
   // 処刑
-  execution(1);
-  if (RIOT) { execution(2); }
+  execution(1)
+  if (RIOT) {
+    execution(2)
+  }
 
-  twilight();
+  twilight()
 
-  guard('jammer');
-  guard('guard');
+  guard("jammer")
+  guard("guard")
 
-  throw_gift();
+  throw_gift()
 
-  seer();
-  witch();
-  alchemist();
+  seer()
+  witch()
+  alchemist()
 
   // 襲撃
-  kill(1);
-  if (GRUDGE) { kill(2); }
-  kill_lonewolf();
+  kill(1)
+  if (GRUDGE) {
+    kill(2)
+  }
+  kill_lonewolf()
 
-  dawn();
-  snatch();
-  return regret();
-};
+  dawn()
+  snatch()
+  return regret()
+}
 
-
-export default { startGM, deployGM, executionGM, checkGM, updateGM };
+export default { startGM, deployGM, executionGM, checkGM, updateGM }
 
 /*
 

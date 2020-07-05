@@ -1,4 +1,10 @@
-import React, { createContext, useContext, useState, useEffect, ReactNode } from "react"
+import React, {
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+  ReactNode,
+} from "react"
 
 interface ChatValue {
   id: string
@@ -21,19 +27,19 @@ function ChatName({ to, head, label }) {
     return (
       <>
         <div className="name center">
-          <span className="pull-right">{{ to }}</span>
-          ▷
+          <span className="pull-right">{{ to }}</span>▷
           <span className="pull-left">{{ head }}</span>
         </div>
         <hr />
       </>
     )
-
   } else {
     return (
       <>
         <div className="name">
-          <sup className="pull-right" v-if="label">{{ label }}</sup>
+          <sup className="pull-right" v-if="label">
+            {{ label }}
+          </sup>
           {{ head }}
         </div>
       </>
@@ -41,14 +47,22 @@ function ChatName({ to, head, label }) {
   }
 }
 
-export function CReport({ id, anker, to, head, label, deco, handle, write_at, children }: ChatValue) {
+export function CReport({
+  id,
+  anker,
+  to,
+  head,
+  label,
+  deco,
+  handle,
+  write_at,
+  children,
+}: ChatValue) {
   return (
     <div className="report" key={id}>
       <div className={`chat ${handle}`} id={id}>
-        <ChatName {...{ to, head, label }}/>
-        <div className={`text ${deco || ''}`}>
-          {children}
-        </div>
+        <ChatName {...{ to, head, label }} />
+        <div className={`text ${deco || ""}`}>{children}</div>
         <div className="date">
           <a className={`btn active`}>{anker}</a>
         </div>
@@ -57,14 +71,22 @@ export function CReport({ id, anker, to, head, label, deco, handle, write_at, ch
   )
 }
 
-export function CPost({ id, anker, to, head, label, deco, handle, write_at, children }: ChatValue) {
+export function CPost({
+  id,
+  anker,
+  to,
+  head,
+  label,
+  deco,
+  handle,
+  write_at,
+  children,
+}: ChatValue) {
   return (
     <div className="post" key={id}>
       <div className={`chat ${handle}`} id={id}>
-        <ChatName {...{ to, head, label }}/>
-        <div className={`text ${deco || ''}`}>
-          {children}
-        </div>
+        <ChatName {...{ to, head, label }} />
+        <div className={`text ${deco || ""}`}>{children}</div>
         <div className="date">
           <a className={`btn active`}>{anker}</a>
         </div>
