@@ -5,7 +5,15 @@ import locale from "date-fns/locale/ja"
 
 import { to_msec, to_tempo } from "fancy-date"
 
-function tempo(doc) {
+type DOC = {
+  tempo: [string, string, string]
+  last_idx: number
+  write_time: string
+  next_time: string
+  last_time: string
+}
+
+function tempo(doc: DOC) {
   if (!doc?.tempo[0]) {
     return null
   }

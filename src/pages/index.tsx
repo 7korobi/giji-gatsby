@@ -1,97 +1,22 @@
-import React, { useContext, useEffect, useReducer } from "react"
+import React from "react"
 import { Helmet } from "react-helmet"
 import { Link } from "gatsby"
-import { pushState, useStore } from "react-petit-hooks/lib/storage"
+import { pushState } from "react-petit-hooks/lib/storage"
 import { usePoll } from "react-petit-hooks/lib/poll"
 
-import Layout, { Context } from "../components/layout"
-import { CReport, CPost } from "../components/chat"
-import Image from "../components/image"
-
-interface Plan {
-  _id: string
-  link: string
-  title: string
-  write_at: string
-  name: string
-  state: string
-  chip: string
-  sign: string
-  card: string[]
-  upd: {
-    description: string
-    time: string
-    interval: string
-    prologue: string
-    start: string
-  }
-  lock: string[]
-  flavor: string[]
-  options: string[]
-  tags: [string, string][]
-}
-
-interface Story {
-  _id: string
-  _type: string
-  card: {
-    discard: any[]
-    event: any[]
-    config: string[]
-  }
-  folder: string
-  is_epilogue: boolean
-  is_finish: boolean
-  name: string
-  options: string[]
-  rating: string
-  sow_auth_id: string
-  timer: {
-    updateddt: string
-    nextupdatedt: string
-    nextchargedt: string
-    nextcommitdt: string
-    scraplimitdt: string
-  }
-  type: {
-    say: string
-    vote: string
-    roletable: string
-    mob: string
-    game: string
-  }
-  upd: {
-    interval: number
-    hour: number
-    minute: number
-  }
-  vid: number
-  vpl: number[]
-
-  is_full_commit: boolean
-}
-
-async function PlanApi() {
-  const res = await fetch("https://giji-api.duckdns.org/api/plan/progress")
-  const { plans } = await res.json()
-  return plans
-}
-
-async function StoryApi() {
-  const res = await fetch("https://giji-api.duckdns.org/api/story/progress")
-  const { stories } = await res.json()
-  return stories
-}
+import Layout from "../components/layout"
+import { CPost } from "../components/chat"
+import { PlanApi, StoryApi } from "../lib/fetch"
 
 export default IndexPage
-function IndexPage({ location: { search, hash }, navigate, path, uri }) {
+function IndexPage({}) {
   pushState({
     a: 1,
     b: 2,
   })
 
-  const [plans] = usePoll<Plan[]>(PlanApi, [], "10m", "1.0.0")
-  const [storys] = usePoll<Story[]>(StoryApi, [], "6h", "1.0.0")
+  const [plans] = usePoll(PlanApi, [], "10m", "1.0.0")
+  const [storys] = usePoll(StoryApi, [], "6h", "1.0.0")
 
   return (
     <Layout>

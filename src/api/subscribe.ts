@@ -20,7 +20,7 @@ type BOOK_INFO = {
   is_notice: string
 }
 
-function ref_for(mode, type, doc) {
+function ref_for(mode: string, type: string, doc: { _id: string }) {
   const { _id } = doc
   if (!_id) {
     return

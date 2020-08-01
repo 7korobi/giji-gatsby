@@ -15,17 +15,30 @@ exports.onCreateWebpackConfig = ({
   getConfig,
 }) => {
   const config = getConfig()
+
+  // support coffeescript.
+  config.resolve.extensions.push('.coffee')
+  config.module.rules.push({
+    test: /\.coffee?$/i,
+    use: {
+      loader: "coffee-loader",
+      options: {
+        transpileOnly: true,
+      },
+    },
+  })
+
+  // support yml.
   config.module.rules.forEach((rule) => {
     const { test, use } = rule
     if (test && ".yml".match(test)) {
       use[0].options = use[1].options = {
         merge: true,
-        prettyErrors: true,
       }
     }
   })
 
-  console.log(stage, JSON.stringify(config))
+  console.log(stage)
   // This will completely replace the webpack config with the modified object.
   actions.replaceWebpackConfig(config)
 

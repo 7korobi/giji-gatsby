@@ -12,7 +12,7 @@ export * from "./subscribe"
 export * from "./book"
 
 export const packMessage = https.onCall(({ text }, { auth }) => {
-  const { uid } = auth
-  const { name, picture, email } = auth.token
+  const { uid } = auth!
+  const { name, picture, email } = auth!.token
   return { uid, email, picture, name, text }
 })
