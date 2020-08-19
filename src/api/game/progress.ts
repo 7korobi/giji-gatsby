@@ -37,32 +37,32 @@ function checkGM() {
     map_reduce(o) {
       c[o.potof.live.role_id] += 1
       switch (o.potof.live.role_id) {
-        case "victim":
+        case 'victim':
           switch (o.role.win) {
-            case "DISH":
+            case 'DISH':
               c[o.role.win] += 1
               return (c.DISH += 1)
           }
           break
-        case "live":
+        case 'live':
           switch (o.role.win) {
-            case "HUMAN":
+            case 'HUMAN':
               c.HUMAN += 1
-              if (o.role_id === "villager") {
+              if (o.role_id === 'villager') {
                 return (c.VILLAGER += 1)
               }
               break
-            case "PIXI":
+            case 'PIXI':
               return (c.PIXI += 1)
-            case "WOLF":
+            case 'WOLF':
               return (c.WOLF += 1)
-            case "LONEWOLF":
+            case 'LONEWOLF':
               c.LONEWOLF += 1
               return (c.WOLF += 1)
             default:
               c.HUMAN += 1
               c.OTHER += 1
-              if (o.role.win === "GURU") {
+              if (o.role.win === 'GURU') {
                 return (c.SHEEP += 1)
               }
           }
@@ -90,44 +90,44 @@ function checkGM() {
   let winner = (() => {
     switch (false) {
       case c.live !== 0:
-        return "NONE"
+        return 'NONE'
       case c.live !== c.LOVE:
-        return "LOVE"
+        return 'LOVE'
       case c.live !== c.SHEEP:
-        return "GURU"
+        return 'GURU'
       case 0 !== c.WOLF:
-        return "HUMAN"
+        return 'HUMAN'
       case !TABULA || !(c.HUMAN <= c.WOLF):
-        return "WOLF"
+        return 'WOLF'
       case !MISTERY || 0 !== c.VILLAGER:
-        return "WOLF"
+        return 'WOLF'
       default:
         return null
     }
   })()
-  if (winner === "WOLF" && c.WOLF === c.LONEWOLF) {
-    winner = "LONEWOLF"
+  if (winner === 'WOLF' && c.WOLF === c.LONEWOLF) {
+    winner = 'LONEWOLF'
   }
 
   if (winner) {
     switch (false) {
       case !(c.LOVE > 0):
-        return "LOVE"
+        return 'LOVE'
       case c.BOND !== c.HATE || c.HATE !== 1:
-        return "HATER"
+        return 'HATER'
       case !(c.PIXI > 0):
         switch (winner) {
-          case "HUMAN":
+          case 'HUMAN':
             msg_pixi_human
             break
-          case "WOLF":
+          case 'WOLF':
             msg_pixi_wolf
             break
-          case "LONEWOLF":
+          case 'LONEWOLF':
             msg_pixi_lonewolf
             break
         }
-        return "PIXI"
+        return 'PIXI'
       default:
         return winner
     }
@@ -146,10 +146,10 @@ export function startGM() {
         case setfriends:
           result.push(ToDo)
           break
-        case "rob":
-          result.push(history(discards.join("、")))
+        case 'rob':
+          result.push(history(discards.join('、')))
           break
-        case "stigma":
+        case 'stigma':
           result.push((o.label = `${codes[idx]}の${o.role.label}`))
           break
         default:
@@ -170,23 +170,19 @@ export function updateGM() {
 
   // 突然死処理
   const suddendeath = Query.potofs.where(
-    (o) => o.live.role_id === "live" && o.stats.SSAY.count === 0
+    (o) => o.live.role_id === 'live' && o.stats.SSAY.count === 0
   )
   for (o of Array.from(suddendeath.list)) {
-    now_dead("suddendead")
+    now_dead('suddendead')
   }
 
   // 能力を使う人のための処理
   const to = {
-    cast: Query.potofs.where((o) => o.live.role.group !== "mob"),
-    live: Query.potofs.where((o) => o.live.role_id === "live"),
-    dead: Query.potofs.where(
-      (o) => o.live.role_id !== "live" && o.live.role.group === "LIVE"
-    ),
-    gm_live: Query.potofs.where(
-      (o) => o.live.role_id === "live" || o.live.role.group === "MOB"
-    ),
-    gm_dead: Query.potofs.where((o) => o.live.role_id !== "live"),
+    cast: Query.potofs.where((o) => o.live.role.group !== 'mob'),
+    live: Query.potofs.where((o) => o.live.role_id === 'live'),
+    dead: Query.potofs.where((o) => o.live.role_id !== 'live' && o.live.role.group === 'LIVE'),
+    gm_live: Query.potofs.where((o) => o.live.role_id === 'live' || o.live.role.group === 'MOB'),
+    gm_dead: Query.potofs.where((o) => o.live.role_id !== 'live'),
   }
 
   const query = Query.stats.where((o) => o.can(turn) && !o.potof_id)
@@ -203,8 +199,8 @@ export function updateGM() {
 
   twilight()
 
-  guard("jammer")
-  guard("guard")
+  guard('jammer')
+  guard('guard')
 
   throw_gift()
 

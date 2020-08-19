@@ -4,8 +4,8 @@
  * DS102: Remove unnecessary code created because of implicit returns
  * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
  */
-import { firestore, database, https } from "firebase-functions"
-import admin from "firebase-admin"
+import { firestore, database, https } from 'firebase-functions'
+import admin from 'firebase-admin'
 
 type SUBSCRIBER = {
   fcm_token: string
@@ -25,55 +25,45 @@ function ref_for(mode: string, type: string, doc: { _id: string }) {
   if (!_id) {
     return
   }
-  const [folder, book_idx] = _id.split("-")
+  const [folder, book_idx] = _id.split('-')
   const book_id = `${folder}-${book_idx}`
 
   return admin.firestore().doc(`${mode}/${book_id}/${type}/${_id}`)
 }
 
-export const subscribe = https.onCall(function (
-  { fcm_token, fcm_topics }: SUBSCRIBER,
-  { auth }
-) {
+export const subscribe = https.onCall(function ({ fcm_token, fcm_topics }: SUBSCRIBER, { auth }) {
   const fcm_tokens = [fcm_token]
-  const all = fcm_topics.map((topic) =>
-    admin.messaging().subscribeToTopic(fcm_tokens, topic)
-  )
+  const all = fcm_topics.map((topic) => admin.messaging().subscribeToTopic(fcm_tokens, topic))
   return Promise.all(all)
 })
 
-export const unsubscribe = https.onCall(function (
-  { fcm_token, fcm_topics }: SUBSCRIBER,
-  { auth }
-) {
+export const unsubscribe = https.onCall(function ({ fcm_token, fcm_topics }: SUBSCRIBER, { auth }) {
   const fcm_tokens = [fcm_token]
-  const all = fcm_topics.map((topic) =>
-    admin.messaging().unsubscribeFromTopic(fcm_tokens, topic)
-  )
+  const all = fcm_topics.map((topic) => admin.messaging().unsubscribeFromTopic(fcm_tokens, topic))
   return Promise.all(all)
 })
 
 export const book_external = https.onRequest(async function (req, res) {
   const { mode, book_id, part_id, face_id, is_notice } = req.query as BOOK_INFO
   const m_book = {
-    topic: "init",
+    topic: 'init',
     notification: {
-      title: "村の情報",
-      body: "",
+      title: '村の情報',
+      body: '',
     },
     webpush: {
       headers: {
-        TTL: "60",
+        TTL: '60',
       },
       notification: {
-        click_action: "https://giji.f5.si/",
+        click_action: 'https://giji.f5.si/',
       },
     },
   }
 
   if (book_id) {
     switch (mode) {
-      case "init":
+      case 'init':
         switch (false) {
           case !!!face_id:
             m_book.topic = book_id
@@ -88,13 +78,13 @@ export const book_external = https.onRequest(async function (req, res) {
               case null:
                 m_book.notification.body = `\n${part_id}\n日付が進みました。\n`
                 break
-              case "scraplimitdt":
+              case 'scraplimitdt':
                 m_book.notification.body = `\n${part_id}\nもうすぐ廃村になります。\n`
                 break
-              case "nextcommitdt":
+              case 'nextcommitdt':
                 m_book.notification.body = `\n${part_id}\n全員がコミット済みです。もうすぐ日付が進みます。\n`
                 break
-              case "nextupdatedt":
+              case 'nextupdatedt':
                 m_book.notification.body = `\n${part_id}\nもうすぐ日付が進みます。\n`
                 break
               default:
@@ -113,5 +103,5 @@ export const book_external = https.onRequest(async function (req, res) {
     }
   }
 
-  res.status(201).send("OK.")
+  res.status(201).send('OK.')
 })

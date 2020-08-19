@@ -1,9 +1,9 @@
-import { firestore, database, https } from "firebase-functions"
-import * as admin from "firebase-admin"
-import format from "date-fns/format"
-import locale from "date-fns/locale/ja"
+import { firestore, database, https } from 'firebase-functions'
+import * as admin from 'firebase-admin'
+import format from 'date-fns/format'
+import locale from 'date-fns/locale/ja'
 
-import { to_msec, to_tempo } from "fancy-date"
+import { to_msec, to_tempo } from 'fancy-date'
 
 type DOC = {
   tempo: [string, string, string]
@@ -18,26 +18,24 @@ function tempo(doc: DOC) {
     return null
   }
 
-  const { last_at, write_at, next_at, now_idx, timezone } = to_tempo(
-    ...doc.tempo
-  )
+  const { last_at, write_at, next_at, now_idx, timezone } = to_tempo(...doc.tempo)
 
   if (now_idx === doc.last_idx) {
     return null
   }
 
   Object.assign(doc, { last_at, write_at, next_at })
-  doc.write_time = format(write_at - timezone, "yyyy/MM/dd HH:mm:ss", {
+  doc.write_time = format(write_at - timezone, 'yyyy/MM/dd HH:mm:ss', {
     locale,
   })
-  doc.next_time = format(next_at - timezone, "yyyy/MM/dd HH:mm:ss", { locale })
-  doc.last_time = format(last_at - timezone, "yyyy/MM/dd HH:mm:ss", { locale })
+  doc.next_time = format(next_at - timezone, 'yyyy/MM/dd HH:mm:ss', { locale })
+  doc.last_time = format(last_at - timezone, 'yyyy/MM/dd HH:mm:ss', { locale })
   doc.last_idx = now_idx
   return now_idx
 }
 
 export const chk_update = firestore
-  .document("parts/{part_id}")
+  .document('parts/{part_id}')
   .onUpdate(({ before, after }, { params }) => {
     console.log(params)
     console.log(after.data())
@@ -51,16 +49,8 @@ export const tick_https = https.onRequest(async (req, res) => {
   //    last_idx: Number
   //    tempo: ["15min"]
 
-  const parts = await admin
-    .firestore()
-    .collection("parts")
-    .where("is_active", "==", true)
-    .get()
-  const games = await admin
-    .firestore()
-    .collection("game")
-    .where("is_active", "==", true)
-    .get()
+  const parts = await admin.firestore().collection('parts').where('is_active', '==', true).get()
+  const games = await admin.firestore().collection('game').where('is_active', '==', true).get()
 
   parts.docs.forEach((doc) => {
     const part = doc.data()
@@ -80,7 +70,7 @@ export const tick_https = https.onRequest(async (req, res) => {
     }
   })
 
-  res.status(201).send("OK.")
+  res.status(201).send('OK.')
 })
 
 /*

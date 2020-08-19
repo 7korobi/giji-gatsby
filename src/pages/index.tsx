@@ -1,22 +1,18 @@
-import React from "react"
-import { Helmet } from "react-helmet"
-import { Link } from "gatsby"
-import { pushState } from "react-petit-hooks/lib/storage"
-import { usePoll } from "react-petit-hooks/lib/poll"
+import React, { useState } from 'react'
+import { usePoll } from 'react-petit-hooks/lib/poll'
+import { Helmet } from 'react-helmet'
+import { Link } from 'gatsby'
 
-import Layout from "../components/layout"
-import { CPost } from "../components/chat"
-import { PlanApi, StoryApi } from "../lib/fetch"
+import { Layout } from '../components/layout'
+import { CPost } from '../components/chat'
+import { PlanApi, StoryApi } from '../lib/fetch'
 
 export default IndexPage
 function IndexPage({}) {
-  pushState({
-    a: 1,
-    b: 2,
-  })
+  const [idx, setIdx] = useState('')
 
-  const [plans] = usePoll(PlanApi, [], "10m", "1.0.0")
-  const [storys] = usePoll(StoryApi, [], "6h", "1.0.0")
+  const [plans] = usePoll(PlanApi, [], '10m', '1.0.0')
+  const [storys] = usePoll(StoryApi, [], '6h', '1.0.0')
 
   return (
     <Layout>

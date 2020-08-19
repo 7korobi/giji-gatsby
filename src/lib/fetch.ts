@@ -65,28 +65,34 @@ interface Story {
 }
 
 export async function PlanApi(): Promise<Plan[]> {
-  const res = await fetch("https://giji-api.duckdns.org/api/plan/progress")
+  const res = await fetch('https://giji-api.duckdns.org/api/plan/progress')
   const { plans }: { plans: Plan[] } = await res.json()
-  Set.sow_village_plan.reset( plans )
+  Set.sow_village_plan.reset(plans)
   return Query.sow_village_plans.list
 }
 
 export async function StoryApi(): Promise<Story[]> {
-  const res = await fetch("https://giji-api.duckdns.org/api/story/progress")
-  const { stories, events }: { stories: Story[], events: Event[] } = await res.json()
-  stories.forEach((o)=>{
+  const res = await fetch('https://giji-api.duckdns.org/api/story/progress')
+  const { stories, events }: { stories: Story[]; events: Event[] } = await res.json()
+  stories.forEach((o) => {
     const sign = o.sow_auth_id.replace(/\./g, '&#2e')
     Object.assign(o, {
       label: o.name,
       sign: sign,
-      mark_ids: (()=>{
-        switch ( o.rating ) {
-          case "default": return []
-          case "child": return ['age_A']
-          case "fireplace": return ['cat']
-          case "sexylove": return ['sexy', 'love']
-          case "sexyviolence": return ['sexy', 'violence']
-          default: return [o.rating]
+      mark_ids: (() => {
+        switch (o.rating) {
+          case 'default':
+            return []
+          case 'child':
+            return ['age_A']
+          case 'fireplace':
+            return ['cat']
+          case 'sexylove':
+            return ['sexy', 'love']
+          case 'sexyviolence':
+            return ['sexy', 'violence']
+          default:
+            return [o.rating]
         }
       })(),
     })

@@ -1,13 +1,7 @@
-import React, {
-  createContext,
-  useContext,
-  useState,
-  useEffect,
-  ReactNode,
-} from "react"
+import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react'
 
 interface ChatValue {
-  id: string
+  id?: string
   anker?: string
   to?: string
   head?: string
@@ -27,8 +21,7 @@ function ChatName({ to, head, label }) {
     return (
       <>
         <div className="name center">
-          <span className="pull-right">{{ to }}</span>▷
-          <span className="pull-left">{{ head }}</span>
+          <span className="pull-right">{{ to }}</span>▷<span className="pull-left">{{ head }}</span>
         </div>
         <hr />
       </>
@@ -62,7 +55,7 @@ export function CReport({
     <div className="report" key={id}>
       <div className={`chat ${handle}`} id={id}>
         <ChatName {...{ to, head, label }} />
-        <div className={`text ${deco || ""}`}>{children}</div>
+        <div className={`text ${deco || ''}`}>{children}</div>
         <div className="date">
           <a className={`btn active`}>{anker}</a>
         </div>
@@ -71,22 +64,12 @@ export function CReport({
   )
 }
 
-export function CPost({
-  id,
-  anker,
-  to,
-  head,
-  label,
-  deco,
-  handle,
-  write_at,
-  children,
-}: ChatValue) {
+export function CPost({ id, anker, to, head, label, deco, handle, write_at, children }: ChatValue) {
   return (
     <div className="post" key={id}>
       <div className={`chat ${handle}`} id={id}>
         <ChatName {...{ to, head, label }} />
-        <div className={`text ${deco || ""}`}>{children}</div>
+        <div className={`text ${deco || ''}`}>{children}</div>
         <div className="date">
           <a className={`btn active`}>{anker}</a>
         </div>

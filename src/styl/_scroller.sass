@@ -1,0 +1,65 @@
+
+body
+  --view-width: 100vw
+  --view-height: 100vh
+  --overflow: scroll
+  
+.book
+  position: relative
+  pointer-events: auto
+  overscroll-behavior: contain
+
+  display: flex
+  align-items: center
+  justify-content: flex-start
+
+  width: var(--view-width)
+  height: var(--view-height)
+
+.card
+  pointer-events: auto
+  flex: 0 0 auto
+  display: flex
+  align-items: center
+  justify-content: center
+  list-style: none
+  margin: 0
+  padding: 0
+  img
+    pointer-events: none
+
+
+.ltr,
+.rtl
+  .book
+    scroll-snap-type: x mandatory
+    overflow-x: var(--overflow)
+
+  .card
+    scroll-snap-align: center
+
+.vertical,
+.tower
+  .book
+    scroll-snap-type: y proximity
+    overflow-y: var(--overflow)
+
+  .card
+    scroll-snap-align: center
+
+
+.ltr
+  .book
+    flex-flow: row nowrap
+
+.rtl
+  .book
+    flex-flow: row-reverse nowrap
+
+.vertical
+  .book
+    flex-flow: column nowrap
+
+.tower
+  .book
+    flex-flow: column-reverse nowrap
