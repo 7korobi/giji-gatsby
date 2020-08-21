@@ -1,4 +1,4 @@
-import { Query, Set } from 'memory-orm'
+import { Query, Set, State } from 'memory-orm'
 import '../models/index.coffee'
 
 interface Plan {
@@ -64,14 +64,19 @@ interface Story {
   is_full_commit: boolean
 }
 
-export async function PlanApi(): Promise<Plan[]> {
-  const res = await fetch('https://giji-api.duckdns.org/api/plan/progress')
-  const { plans }: { plans: Plan[] } = await res.json()
-  Set.sow_village_plan.reset(plans)
-  return Query.sow_village_plans.list
+interface Event {
+  
 }
 
-export async function StoryApi(): Promise<Story[]> {
+export async function PlanApi() {
+  const res = await fetch('https://giji-api.duckdns.org/api/plan/progress')
+  const { plans }: { plans: Plan[] } = await res.json()
+  return State.transaction(()=>{
+    Set.sow_village_plan.reset(plans)
+  })
+}
+
+export async function StoryApi() {
   const res = await fetch('https://giji-api.duckdns.org/api/story/progress')
   const { stories, events }: { stories: Story[]; events: Event[] } = await res.json()
   stories.forEach((o) => {
@@ -97,10 +102,10 @@ export async function StoryApi(): Promise<Story[]> {
       })(),
     })
   })
-  Set.sow_village.reject(Query.sow_villages.prologue.list)
-  Set.sow_village.reject(Query.sow_villages.progress.list)
-  Set.sow_turn.merge(events)
-  Set.sow_village.merge(stories)
-
-  return Query.sow_villages.list
+  return State.transaction(()=>{
+    Set.sow_village.reject(Query.sow_villages.prologue.list)
+    Set.sow_village.reject(Query.sow_villages.progress.list)
+    Set.sow_turn.merge(events)
+    Set.sow_village.merge(stories)
+  })
 }

@@ -2,7 +2,7 @@ import React, { createContext, useContext, ReactNode, useState } from 'react'
 import { Helmet } from 'react-helmet'
 
 import { BrowserProvider } from 'react-petit-hooks/lib/browser'
-import { useLocalStorage } from 'react-petit-hooks/lib/storage'
+import { useLocalStorage, useReplaceState } from 'react-petit-hooks/lib/storage'
 import { Bits } from 'react-petit-hooks/lib/bits'
 import { __BROWSER__ } from 'react-petit-hooks/lib/device'
 
@@ -107,10 +107,14 @@ export function RootLayout({ ssr, children }: RootLayoutProps) {
 }
 
 export function Layout({ children }: LayoutProps) {
-  const [welcome, setWelcome] = useState(headInit.welcome)
+  const [{ welcome }, setHead] = useReplaceState(headInit)
   const ui = useContext(UiContext)
   const css = useContext(CssContext)
   const { setShows, setBg, setFont, setTheme } = useContext(SetterContext)
+
+  function setWelcome(welcome: typeof headInit['welcome']) {
+    setHead({ welcome })
+  }
 
   function setPin(is: boolean) {
     ui.shows.is.pin = is as any
